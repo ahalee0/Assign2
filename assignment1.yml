@@ -1,0 +1,33 @@
+---
+- hosts: client_group
+  become: yes
+  tasks:
+    - name: Install samba
+      yum:
+        name: 
+          - samba
+          - samba-client
+        state: latest
+      notify:
+        - restart samba  
+    - name: Deploy custom samba config
+      copy:
+        src: smb.conf
+        dest: /etc/samba/smb.conf
+        owner: haleemah
+        group: haleemah
+        mode: '0644'
+      notify:
+        - restart samba
+    - name: Ensure the samba service is running
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - smb
+  handlers:
+    - name: restart samba
+      service:
+        name: smb
+        state: restarted
