@@ -1,5 +1,4 @@
----
-- hosts: client_group
+
   become: yes
   tasks:
     - name: Install samba
